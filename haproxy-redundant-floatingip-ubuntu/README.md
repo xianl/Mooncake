@@ -62,7 +62,7 @@ This template uses the resource loops capability to create network interfaces, v
             virtual_router_id 51
         
             virtual_ipaddress {
-                1.2.3.4
+                *1.2.3.4*
             }
         
             track_script {
@@ -86,6 +86,7 @@ This template uses the resource loops capability to create network interfaces, v
 5.  restart the keepalived service 
     
     service keepalived stop
+    
     service keepalived start
 
-6.  SSH to the haproxy vm0 via the 50002 port and repeat step 4 & 5
+6.  SSH to the haproxy vm1 via the 50002 port and repeat step 4 & 5
