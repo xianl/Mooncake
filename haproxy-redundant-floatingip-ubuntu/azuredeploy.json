@@ -446,8 +446,8 @@
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "1.8",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.5",
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": "[variables('appVMScripts').fileUris]",
@@ -470,8 +470,8 @@
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "1.8",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.5",
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": "[variables('haproxyVMScripts').fileUris]",
