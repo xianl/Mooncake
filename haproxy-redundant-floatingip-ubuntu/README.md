@@ -30,3 +30,62 @@ This template uses the resource loops capability to create network interfaces, v
 * Application VMs
   * Apache webserver is deployed as part of *CustomScript Extension*. No changes are done to default configuration.
   * This is only a proof-of-concept. The functionality of application VMs can be modified per requirement. Corresponding changes need to be done to *variables* section of the template.
+  * 
+  
+
+Deploymennt Steps:
+
+1.  First from the new portal, create a new resource group.
+2.  From the Azure Powershell, run the command below to start the ARM deployment.
+
+    New-AzureRmResourceGroupDeployment -Name [Deployment Name] -ResourceGroupName [Resource Group Name] -TemplateUri https://raw.githubusercontent.com/xianl/Mooncake/master/haproxy-redundant-floatingip-ubuntu/azuredeploy.json
+
+3.  Wait until the deployment finished.
+4.  SSH to the haproxy vm0 via the 50001 port and modify the /etc/keepalived/keepalived.conf to add the virtual IP address
+    For example, the public Ip address assigned is 1.2.3.4, please modify the file as below.
+
+    vrrp_script chk_appsvc {
+            script /usr/local/sbin/keepalived-check-appsvc.sh
+            interval 1
+            fall 2
+            rise 2
+        }
+        
+        vrrp_instance VI_1 {
+            interface eth0 
+        
+            authentication {
+                auth_type PASS
+                auth_pass secr3t
+            }
+        
+            virtual_router_id 51
+        
+            virtual_ipaddress {
+                1.2.3.4
+            }
+        
+            track_script {
+                chk_appsvc
+            }
+        
+            notify /usr/local/sbin/keepalived-action.sh
+            notify_stop "/usr/local/sbin/keepalived-action.sh INSTANCE VI_1 STOP"
+        
+        
+            state MASTER
+            priority 101
+        
+            unicast_src_ip 10.0.0.7
+            unicast_peer {
+                10.0.0.6
+            }
+        
+        }
+
+5.  restart the keepalived service 
+    
+    service keepalived stop
+    service keepalived start
+
+6.  SSH to the haproxy vm0 via the 50002 port and repeat step 4 & 5
