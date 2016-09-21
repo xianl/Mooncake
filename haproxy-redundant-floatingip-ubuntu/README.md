@@ -45,7 +45,6 @@ This template uses the resource loops capability to create network interfaces, v
     For example, the public Ip address assigned is 1.2.3.4, please modify the file as below. (this is because China Azure currently doesn't support *CustomScript Extension* version 2.0 , so we need to specify the virtual address manually).
 
 
-    
     vrrp_script chk_appsvc {
             script /usr/local/sbin/keepalived-check-appsvc.sh
             interval 1
