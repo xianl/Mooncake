@@ -445,7 +445,7 @@
         "[concat('Microsoft.Compute/virtualMachines/', parameters('appVMNamePrefix'), copyindex())]"
       ],
       "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
+        "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.5",
         "autoUpgradeMinorVersion": true,
@@ -469,7 +469,7 @@
         "appVMExtensionsLoop"
       ],
       "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
+        "publisher": "Microsoft.OSTCExtensions",
         "type": "CustomScriptForLinux",
         "typeHandlerVersion": "1.5",
         "autoUpgradeMinorVersion": true,
