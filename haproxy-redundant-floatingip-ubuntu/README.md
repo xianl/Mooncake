@@ -33,7 +33,7 @@ This template uses the resource loops capability to create network interfaces, v
   * 
   
 
-Deploymennt Steps:
+###Deploymennt Steps:
 
 1.  First from the new portal, create a new resource group.
 2.  From the Azure Powershell, run the command below to start the ARM deployment.
