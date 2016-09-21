@@ -46,13 +46,12 @@ This template uses the resource loops capability to create network interfaces, v
 
 
     ==================
-    vrrp_script chk_appsvc {
+        vrrp_script chk_appsvc {
             script /usr/local/sbin/keepalived-check-appsvc.sh
             interval 1
             fall 2
             rise 2
         }
-        
         vrrp_instance VI_1 {
             interface eth0 
         
