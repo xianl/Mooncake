@@ -19,22 +19,11 @@
       },
       "type": "string"
     },
-    "newStorageAccountName": {
+	"osDiskVhdUri": {
+      "type": "string",
       "metadata": {
-        "description": "Name of storage account"
-      },
-      "type": "string"
-    },
-    "offer": {
-      "allowedValues": [
-        "R7730BYOL",
-        "R7730PAYG"
-      ],
-      "defaultValue": "R7730BYOL",
-      "metadata": {
-        "description": "Offer version and type"
-      },
-      "type": "string"
+        "description": "Uri of the existing VHD"
+      }
     },
     "sshPublicKey": {
       "defaultValue": "",
@@ -117,21 +106,6 @@
   "variables": {
     "apiVersion": "2015-06-15",
     "customData": "[concat('#!/bin/bash\n', '\n', 'installSecurityGateway=\"', parameters('installSecurityGateway'), '\"', '\n', 'installSecurityGateway=\"$(echo $installSecurityGateway | tr \"TF\" \"tf\")\"\n', 'installSecurityManagement=\"', parameters('installSecurityManagement'), '\"', '\n', 'installSecurityManagement=\"$(echo $installSecurityManagement | tr \"TF\" \"tf\")\"\n', 'adminPassword=\"', parameters('adminPassword'), '\"', '\n', 'managementGUIClientNetwork=\"', parameters('managementGUIClientNetwork'), '\"', '\n', 'ManagementGUIClientBase=\"$(echo $managementGUIClientNetwork | cut -d / -f 1)\"\n', 'ManagementGUIClientMaskLength=\"$(echo $managementGUIClientNetwork | cut -d / -f 2)\"\n', 'sicKey=\"', parameters('sicKey'), '\"', '\n', 'conf=\"install_security_gw=$installSecurityGateway\"\n', 'if $installSecurityGateway; then\n', '    conf=\"${conf}&install_ppak=true\"\n', '    conf=\"${conf}&gateway_cluster_member=false\"\n', 'fi\n', 'conf=\"${conf}&install_security_managment=$installSecurityManagement\"\n', 'if $installSecurityManagement; then\n', '    conf=\"${conf}&install_mgmt_primary=true\"\n', '    conf=\"${conf}&mgmt_admin_name=admin\"\n', '    conf=\"${conf}&mgmt_admin_passwd=$adminPassword\"\n', '    conf=\"${conf}&mgmt_gui_clients_radio=network\"\n', '    conf=\"${conf}&mgmt_gui_clients_ip_field=$ManagementGUIClientBase\"\n', '    conf=\"${conf}&mgmt_gui_clients_subnet_field=$ManagementGUIClientMaskLength\"\n', 'fi\n', 'conf=\"${conf}&ftw_sic_key=$sicKey\"\n', '\n', 'config_system -s $conf\n', 'shutdown -r now\n')]",
-    "imageOffer": "check-point-r77-10",
-    "imagePublisher": "checkpoint",
-    "imageReference": "[variables(concat('imageReference', parameters('offer')))]",
-    "imageReferenceR7730BYOL": {
-      "offer": "[variables('imageOffer')]",
-      "publisher": "[variables('imagePublisher')]",
-      "sku": "sg-byol",
-      "version": "latest"
-    },
-    "imageReferenceR7730PAYG": {
-      "offer": "[variables('imageOffer')]",
-      "publisher": "[variables('imagePublisher')]",
-      "sku": "sg-ngtp",
-      "version": "latest"
-    },
     "nic1Name": "gateway-nic",
     "osProfile": "[variables(concat('osprofile', parameters('authenticationType')))]",
     "osProfilepassword": {
@@ -156,22 +130,10 @@
         }
       }
     },
-    "plan": "[variables(concat('plan', parameters('offer')))]",
-    "planR7730BYOL": {
-      "name": "sg-byol",
-      "product": "[variables('imageOffer')]",
-      "publisher": "[variables('imagePublisher')]"
-    },
-    "planR7730PAYG": {
-      "name": "sg-ngtp",
-      "product": "[variables('imageOffer')]",
-      "publisher": "[variables('imagePublisher')]"
-    },
-    "storageAccountType": "Standard_LRS",
     "vnetName": "vnet",
     "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
     "addressPrefix": "10.0.0.0/16",
-    "onPremiseNetwork": "198.51.100.0/24",
+    "onPremiseNetwork": "192.168.3.0/24",
     "subnet1Name": "external-subnet",
     "subnet1Prefix": "10.0.1.0/24",
     "subnet1Id": "[concat(variables('vnetId'), '/subnets/', variables('subnet1Name'))]",
@@ -217,15 +179,6 @@
             }
           }
         ]
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[variables('apiVersion')]",
-      "location": "[resourceGroup().location]",
-      "name": "[parameters('newStorageAccountName')]",
-      "properties": {
-        "accountType": "[variables('storageAccountType')]"
       }
     },
     {
@@ -305,20 +258,10 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "[variables('apiVersion')]",
-      "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nic1Name'))]"
-      ],
+      "dependsOn":  "[concat('Microsoft.Network/networkInterfaces/', variables('nic1Name'))]",
       "location": "[resourceGroup().location]",
       "name": "[parameters('vmName')]",
-      "plan": "[variables('plan')]",
       "properties": {
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "true",
-            "storageUri": "[concat('http://', parameters('newStorageAccountName'), '.blob.core.windows.net')]"
-          }
-        },
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
@@ -334,13 +277,13 @@
         },
         "osProfile": "[variables('osProfile')]",
         "storageProfile": {
-          "imageReference": "[variables('imageReference')]",
           "osDisk": {
             "caching": "ReadWrite",
-            "createOption": "FromImage",
+			"osType": "linux",
+            "createOption": "Attach",
             "name": "osDisk",
             "vhd": {
-              "uri": "[concat('http://',parameters('newStorageAccountName'), '.blob.core.windows.net/vhds/', parameters('vmName'), '.vhd')]"
+               "uri": "[parameters('osDiskVhdUri')]"
             }
           }
         }
