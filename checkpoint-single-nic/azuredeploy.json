@@ -19,6 +19,12 @@
       },
       "type": "string"
     },
+	 "StorageAccountName": {
+      "metadata": {
+        "description": "Name of storage account"
+      },
+      "type": "string"
+    },
 	"osDiskVhdUri": {
       "type": "string",
       "metadata": {
@@ -282,10 +288,11 @@
           "osDisk": {
             "caching": "ReadWrite",
 			"osType": "linux",
-            "createOption": "Attach",
+            "createOption": "FromImage",
+			"image" : "[parameters('osDiskVhdUri')]",
             "name": "osDisk",
             "vhd": {
-               "uri": "[parameters('osDiskVhdUri')]"
+               "uri": "[concat('http', '://', parameters('StorageAccountName'), '.blob.core.chinacloudapi.cn', concat('/vhds/','checkpoint-disk.vhd'))]"
             }
           }
         }
