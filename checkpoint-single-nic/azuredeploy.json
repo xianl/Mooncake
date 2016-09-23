@@ -289,7 +289,7 @@
             "caching": "ReadWrite",
 			"osType": "linux",
             "createOption": "FromImage",
-			"image" : "[parameters('osDiskVhdUri')]",
+			"image" :  {"uri": "[parameters('osDiskVhdUri')]"},
             "name": "osDisk",
             "vhd": {
                "uri": "[concat('http', '://', parameters('StorageAccountName'), '.blob.core.chinacloudapi.cn', concat('/vhds/','checkpoint-disk.vhd'))]"
