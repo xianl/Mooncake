@@ -507,7 +507,7 @@
                   "protectedSettings": {
                     "storageAccountName": "[variables('applicationDiagnosticsStorageAccountName')]",
                     "storageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('applicationDiagnosticsStorageAccountName')),'2015-05-01-preview').key1]",
-                    "storageAccountEndPoint": "https://core.windows.net/"
+                    "storageAccountEndPoint": "https://core.chinacloudapi.cn/"
                   },
                   "publisher": "Microsoft.Azure.Diagnostics",
                   "settings": {
